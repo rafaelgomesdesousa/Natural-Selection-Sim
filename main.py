@@ -29,8 +29,8 @@ time_between_fruits=1000
 last_spawn_fruit=pygame.time.get_ticks()
 
 
-spawn_Fruits(500,fruits, width, heigth, screen)
-spawn_Individuals(75, individuals, width, heigth, screen)
+spawn_Fruits(750,fruits, width, heigth, screen)
+spawn_Individuals(50, individuals, width, heigth, screen)
 
 fonte = pygame.font.SysFont('Arial', 30)
 
@@ -60,7 +60,7 @@ while running:
     current_time=pygame.time.get_ticks()
 
     if current_time-last_spawn_fruit>time_between_fruits:
-        spawn_Fruits(3, fruits, width, heigth, screen)
+        spawn_Fruits(50, fruits, width, heigth, screen)
         for individual in individuals:
             print(individual.energy)
 
@@ -84,15 +84,16 @@ while running:
                 individual.energy-=reproduction_cost
                 individual.mate_target.energy -= reproduction_cost
 
+                new_genes = mix_genes(individual, individual.mate_target)
                 individual.ready_to_reproduce=False
                 individual.mate_target.ready_to_reproduce=False
                 individual.mate_target=None
 
-                child=Individual(individual.genes[0],
-                                 individual.genes[1],
-                                 individual.genes[2],
-                                 individual.genes[3],
-                                 individual.genes[4],
+                child=Individual(new_genes[0],
+                                 new_genes[1],
+                                 new_genes[2],
+                                 new_genes[3],
+                                 new_genes[4],
                                  individual.pos.x,
                                  individual.pos.y,
                                  individual.screen)
@@ -107,7 +108,15 @@ while running:
     for individual in individuals:
         for fruit in fruits[:]:
             if checking_Collision(individual, fruit):
-                individual.energy+=fruit.protein*10
+                energy_to_receive=fruit.protein*10
+                individual.energy+=energy_to_receive
+
+                if individual.most_significant_gene==3:
+                    for friend in individuals:
+                        if friend!=individual and friend.most_significant_gene==3:
+                            if individual.pos.distance_to(friend.pos)<=individual.perception:
+                                friend.energy+=(energy_to_receive)
+
                 fruits.remove(fruit)
 
         attack(individual, individuals)

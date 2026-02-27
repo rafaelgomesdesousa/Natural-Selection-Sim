@@ -152,8 +152,8 @@ def movement(individual):
     individual.pos.y = max(0, min(individual.pos.y, individual.screen.get_height()))
         #individual.pos.x, individual.pos.y = individual.pos.x, individual.pos.y
     
-    energy_cost=0.05
-    speed_energy = individual.velocity * 0.02
+    energy_cost=0.05   #COLOCARA 0.05 DEPOIS
+    speed_energy = individual.velocity * 0.02  #COLOCAR 0.02 DEPOIS
 
     total_spent=energy_cost+speed_energy
 
@@ -219,3 +219,20 @@ def find_mate(individual, individuals):
     if best_mate is not None:
         individual.mate_target = best_mate
 
+
+def mix_genes(father, mother):
+    son_genes=[]
+    mutation_rate=0.25
+
+    for i in range(5):
+        chosen_gene=random.choice([father.genes[i], mother.genes[i]])
+
+        if random.random()<mutation_rate:
+            mutation=random.choice([1,-1])
+            chosen_gene+=mutation
+
+            chosen_gene=max(1, chosen_gene)
+
+        son_genes.append(chosen_gene)
+
+    return son_genes

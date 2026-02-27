@@ -37,11 +37,11 @@ class Individual:
         if self.most_significant_gene==4:
             self.color='red'
         elif self.most_significant_gene==3:
-            self.color='yellow'
+            self.color='green'
         elif self.most_significant_gene==2:
             self.color='purple'
         elif self.most_significant_gene==1:
-            self.color='green'
+            self.color='yellow'
         elif self.most_significant_gene==0:
             self.color='blue'
 
