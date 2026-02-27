@@ -19,7 +19,7 @@ def grid_draw(width, heigth, grid_size, grid_color, screen):
 
 def spawn_Fruits(fruits_qtd, fruits, width, heigth,screen):
     for i in range(0,fruits_qtd):
-        random_protein=random.randint(1,3)
+        random_protein=random.randint(1,2)
         random_x=random.randint(0, width)
         random_y=random.randint(0,heigth)
         fruits.append(Fruits(random_protein, random_x, random_y, screen))
@@ -79,13 +79,53 @@ def hunt(individual, fruits, individuals):
     if best is not None:
         individual.alvo=best
 
+def flee(individual, individuals):
+
+    if individual.carnivore:
+        individual.predator=None
+        return
+
+    worst=None
+    closest=float('inf')
+
+    individual.predator=None
+
+    for i in individuals:
+        if i==individual or not i.carnivore:
+            continue
+        dist_x=i.pos.x-individual.pos.x
+        dist_y=i.pos.y-individual.pos.y
+
+        distance=math.hypot(dist_x,dist_y)
+
+        if distance<individual.perception and distance<closest:
+            closest=distance
+            worst=i
+
+    if worst is not None:
+        individual.predator=worst
+
 
 def movement(individual):
-    if individual.alvo:
+
+    if individual.predator:
+        direction=individual.pos-pygame.math.Vector2(individual.predator.pos.x, individual.predator.pos.y)
+
+        if direction.length()>0:
+            direction = direction.normalize()
+            individual.pos += direction * individual.velocity
+
+    elif individual.mate_target:
+        direction=pygame.math.Vector2(individual.mate_target.pos-individual.pos)
+
+        if direction.length()>0:
+            direction=direction.normalize()
+            individual.pos+=direction*individual.velocity
+
+    elif individual.alvo:
         direction=pygame.math.Vector2(individual.alvo.pos.x,individual.alvo.pos.y)-individual.pos
 
         if direction.length()>0:
-
             direction=direction.normalize()
             individual.pos+=direction*individual.velocity
 
@@ -112,7 +152,7 @@ def movement(individual):
     individual.pos.y = max(0, min(individual.pos.y, individual.screen.get_height()))
         #individual.pos.x, individual.pos.y = individual.pos.x, individual.pos.y
     
-    energy_cost=0.1
+    energy_cost=0.05
     speed_energy = individual.velocity * 0.02
 
     total_spent=energy_cost+speed_energy
@@ -135,6 +175,7 @@ def checking_Death(list_individuals):
         if individual.energy<=0:
             list_individuals.remove(individual)
 
+
 def attack(individual, list_individuals):
     if individual.carnivore:
         for i in list_individuals:
@@ -150,4 +191,31 @@ def attack(individual, list_individuals):
                         i.velocity+=0.5
                         i.injured=True
 
+def ready_to_reproduce(individual):
+    if individual.energy>individual.initial_energy+300:
+        individual.ready_to_reproduce=True
+
+
+def find_mate(individual, individuals):
+    individual.mate_target = None
+
+    if not individual.ready_to_reproduce:
+        return
+    
+    best_mate = None
+    closest = float('inf')
+
+    for i in individuals:
+        if individual==i:
+            continue
+            
+        if i.ready_to_reproduce and individual.most_significant_gene==i.most_significant_gene:
+
+            distance=individual.pos.distance_to(i.pos)
+
+            if distance<individual.perception and distance<closest:
+                closest = distance
+                best_mate = i
+    if best_mate is not None:
+        individual.mate_target = best_mate
 
