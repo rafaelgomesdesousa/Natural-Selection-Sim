@@ -29,19 +29,19 @@ class Individual:
         self.ready_to_reproduce=False
         self.mate_target=None
 
-        if(self.angriness>=5):
+        if(self.most_significant_gene==4):
             self.carnivore=True
 
         if self.carnivore:
             self.damage=50
             #self.energy_waist=0.03
-            self.velocity+=0.2
+            self.velocity+=0.18
 
         if self.most_significant_gene==1:
             self.energy_waist=0.01
 
         if self.most_significant_gene==2:
-            self.energy_waist=0.1
+            self.energy_waist=0.5
 
         #Setting Color
         if self.most_significant_gene==4:

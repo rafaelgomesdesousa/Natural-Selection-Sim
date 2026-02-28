@@ -29,8 +29,13 @@ time_between_fruits=1000
 last_spawn_fruit=pygame.time.get_ticks()
 
 
-spawn_Fruits(750,fruits, width, heigth, screen)
-spawn_Individuals(50, individuals, width, heigth, screen)
+spawn_Fruits(1000,fruits, width, heigth, screen)
+#spawn_Individuals(50, individuals, width, heigth, screen)
+
+spawn_specific_individuals(5, individuals, width, heigth, 1, 1, screen)
+spawn_specific_individuals(5, individuals, width, heigth, 2, 2, screen)
+spawn_specific_individuals(5, individuals, width, heigth, 3, 3, screen)
+spawn_specific_individuals(5, individuals, width, heigth, 4, 4, screen)
 
 fonte = pygame.font.SysFont('Arial', 30)
 
@@ -58,9 +63,8 @@ while running:
     grid_draw(width, heigth, square_size, grid_color, screen)
 
     current_time=pygame.time.get_ticks()
-
     if current_time-last_spawn_fruit>time_between_fruits:
-        spawn_Fruits(20, fruits, width, heigth, screen)
+        spawn_Fruits(30, fruits, width, heigth, screen)
         for individual in individuals:
             print(individual.energy)
 
@@ -110,8 +114,10 @@ while running:
         for fruit in fruits[:]:
             if checking_Collision(individual, fruit):
                 energy_to_receive=fruit.protein*10
-                individual.energy+=energy_to_receive
-
+                if individual.carnivore:
+                    individual.energy+=energy_to_receive/4
+                else: 
+                    individual.energy+=energy_to_receive
                 if individual.most_significant_gene==3:
                     for friend in individuals:
                         if friend!=individual and friend.most_significant_gene==3:

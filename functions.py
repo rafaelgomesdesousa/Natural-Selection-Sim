@@ -40,6 +40,33 @@ def spawn_Individuals(individuals_qtd, individuals, width, heigth, screen):
 
         individuals.append(Individual(p, e, v, s, a, x, y, screen))
 
+def spawn_specific_individuals(individuals_qtd, individuals, width, heigth, quadrant, most_significant_gene, screen):
+    for i in range(0, individuals_qtd):
+        points=[2,2,2,2,2]
+
+        points[most_significant_gene]=5
+
+        p,e,v,s,a=points
+
+        half_width=int(width/2)
+        half_heigth=int(heigth/2)
+
+        if quadrant==1:
+            x=random.randint(half_width, width)
+            y=random.randint(0, half_heigth)
+        elif quadrant==2:
+            x=random.randint(0, half_width)
+            y=random.randint(0, half_heigth)
+        elif quadrant==3:
+            x=random.randint(0,half_width)
+            y=random.randint(half_heigth, heigth)
+        elif quadrant==4:
+            x=random.randint(half_width, width)
+            y=random.randint(half_heigth, heigth)
+
+        individuals.append(Individual(p,e,v,s,a,x,y,screen))
+
+
 
 def hunt(individual, fruits, individuals):
     entities=fruits+individuals
@@ -222,7 +249,7 @@ def find_mate(individual, individuals):
 
 def mix_genes(father, mother):
     son_genes=[]
-    mutation_rate=0.25
+    mutation_rate=0.75
 
     for i in range(5):
         chosen_gene=random.choice([father.genes[i], mother.genes[i]])
@@ -253,7 +280,7 @@ def find_group(individual, individuals):
         if i.most_significant_gene==3:
             distance = individual.pos.distance_to(i.pos)
 
-            if 15 < distance < individual.perception and distance < closest:
+            if 15 < distance < individual.perception+10 and distance < closest:
                 closest = distance
                 closest_friend = i
 
