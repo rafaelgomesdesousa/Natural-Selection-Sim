@@ -74,6 +74,7 @@ while running:
         hunt(individual, fruits, individuals)
 
         movement(individual)
+        find_group(individual, individuals)
 
     new_born=[]
 
@@ -115,7 +116,7 @@ while running:
                     for friend in individuals:
                         if friend!=individual and friend.most_significant_gene==3:
                             if individual.pos.distance_to(friend.pos)<=individual.perception:
-                                friend.energy+=(energy_to_receive)
+                                friend.energy+=(energy_to_receive)/2
 
                 fruits.remove(fruit)
 

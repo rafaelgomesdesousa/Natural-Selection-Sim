@@ -153,7 +153,7 @@ def movement(individual):
         #individual.pos.x, individual.pos.y = individual.pos.x, individual.pos.y
     
     energy_cost=0.05   #COLOCARA 0.05 DEPOIS
-    speed_energy = individual.velocity * 0.02  #COLOCAR 0.02 DEPOIS
+    speed_energy = individual.velocity * 0.05  #COLOCAR 0.02 DEPOIS
 
     total_spent=energy_cost+speed_energy
 
@@ -236,3 +236,30 @@ def mix_genes(father, mother):
         son_genes.append(chosen_gene)
 
     return son_genes
+
+def find_group(individual, individuals):
+    if individual.most_significant_gene!=3:
+        return
+    
+    if individual.predator or individual.mate_target or individual.alvo:
+        return 
+
+    closest_friend=None
+    closest=float('inf')
+
+    for i in individuals:
+        if individual==i:
+            continue
+        if i.most_significant_gene==3:
+            distance = individual.pos.distance_to(i.pos)
+
+            if 15 < distance < individual.perception and distance < closest:
+                closest = distance
+                closest_friend = i
+
+    if closest_friend:
+        direction=closest_friend.pos-individual.pos
+        if direction.length()>0:
+            direction = direction.normalize()
+
+            individual.pos += direction * (individual.velocity * 0.8)

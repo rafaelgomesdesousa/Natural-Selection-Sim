@@ -32,6 +32,7 @@ class Individual:
 
         if self.carnivore:
             self.damage=50
+            self.velocity+=0.2
 
         #Setting Color
         if self.most_significant_gene==4:
