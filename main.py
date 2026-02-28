@@ -60,7 +60,7 @@ while running:
     current_time=pygame.time.get_ticks()
 
     if current_time-last_spawn_fruit>time_between_fruits:
-        spawn_Fruits(50, fruits, width, heigth, screen)
+        spawn_Fruits(20, fruits, width, heigth, screen)
         for individual in individuals:
             print(individual.energy)
 

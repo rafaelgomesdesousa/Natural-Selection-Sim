@@ -152,10 +152,10 @@ def movement(individual):
     individual.pos.y = max(0, min(individual.pos.y, individual.screen.get_height()))
         #individual.pos.x, individual.pos.y = individual.pos.x, individual.pos.y
     
-    energy_cost=0.05   #COLOCARA 0.05 DEPOIS
-    speed_energy = individual.velocity * 0.05  #COLOCAR 0.02 DEPOIS
+    energy_cost=individual.energy_waist   #COLOCARA 0.05 DEPOIS
+    #speed_energy = individual.velocity * 0.05  #COLOCAR 0.02 DEPOIS
 
-    total_spent=energy_cost+speed_energy
+    total_spent=energy_cost
 
     individual.energy-=total_spent
 

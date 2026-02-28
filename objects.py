@@ -5,7 +5,7 @@ class Individual:
     def __init__(self, p, e, v, s, a, x, y, screen):
         self.perception=p*50
         self.energy=e*50
-        self.velocity=v/2
+        self.velocity=0.5+v/5
         self.sociability=s
         self.angriness=a
         self.initial_energy = self.energy
@@ -21,6 +21,8 @@ class Individual:
         self.damage=0
         self.injured=False
 
+        self.energy_waist=0.05
+
         self.alvo=None
         self.predator=None
 
@@ -32,7 +34,14 @@ class Individual:
 
         if self.carnivore:
             self.damage=50
+            #self.energy_waist=0.03
             self.velocity+=0.2
+
+        if self.most_significant_gene==1:
+            self.energy_waist=0.01
+
+        if self.most_significant_gene==2:
+            self.energy_waist=0.1
 
         #Setting Color
         if self.most_significant_gene==4:
@@ -51,8 +60,8 @@ class Individual:
         #pygame.draw.circle(self.screen, self.color, self.pos, self.size)
         pygame.draw.rect(self.screen, self.color, (self.pos.x, self.pos.y, self.size, self.size))
 
-        if self.ready_to_reproduce:
-            pygame.draw.circle(self.screen, (255, 105, 180), self.pos, self.perception, 1)
+        #if self.ready_to_reproduce:
+            #pygame.draw.circle(self.screen, (255, 105, 180), self.pos, self.perception, 1)
 
 
 
