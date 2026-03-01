@@ -212,7 +212,11 @@ def attack(individual, list_individuals):
             if not i.carnivore:
                 if checking_Collision(individual, i):
                     i.energy-=individual.damage
-                    individual.energy+=10
+
+                    if "Energy_Steal" in individual.skills:
+                        individual.energy+=i.energy*0.2
+                    else:
+                        individual.energy+=10
 
                     if not i.injured:
                         i.velocity+=0.5

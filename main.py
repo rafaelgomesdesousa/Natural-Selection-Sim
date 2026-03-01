@@ -32,10 +32,11 @@ last_spawn_fruit=pygame.time.get_ticks()
 spawn_Fruits(1000,fruits, width, heigth, screen)
 #spawn_Individuals(50, individuals, width, heigth, screen)
 
-spawn_specific_individuals(5, individuals, width, heigth, 1, 1, screen)
-spawn_specific_individuals(5, individuals, width, heigth, 2, 2, screen)
-spawn_specific_individuals(5, individuals, width, heigth, 3, 3, screen)
-spawn_specific_individuals(5, individuals, width, heigth, 4, 4, screen)
+spawn_specific_individuals(20, individuals, width, heigth, 1, 1, screen)     #ENERGY
+spawn_specific_individuals(20, individuals, width, heigth, 2, 2, screen)     #VELOCITY
+spawn_specific_individuals(20, individuals, width, heigth, 3, 3, screen)     #SOCIABILITY
+spawn_specific_individuals(20, individuals, width, heigth, 4, 4, screen)     #ANGRINESS
+ 
 
 fonte = pygame.font.SysFont('Arial', 30)
 
@@ -64,9 +65,11 @@ while running:
 
     current_time=pygame.time.get_ticks()
     if current_time-last_spawn_fruit>time_between_fruits:
-        spawn_Fruits(30, fruits, width, heigth, screen)
-        for individual in individuals:
-            print(individual.energy)
+        spawn_Fruits(30, fruits, width, heigth, screen) #MUDAR PRA 30 FRUTAS POR SEGUNDO DEPOIS
+        #spawn_specific_individuals(10, individuals, width, heigth, 2, 1, screen)   DESCOMENTAR PRA VER OS UPGRADES DOS CARNIVOROS
+        #for individual in individuals:
+            #print(individual.energy)
+        
 
         last_spawn_fruit=current_time
 
@@ -114,15 +117,38 @@ while running:
         for fruit in fruits[:]:
             if checking_Collision(individual, fruit):
                 energy_to_receive=fruit.protein*10
+
+                if individual.most_significant_gene==3 and "Leadership" not in individual.skills:
+                    for leader in individuals:
+                        if leader != individual and leader.most_significant_gene==3:
+                            if "Leadership" in leader.skills:
+                                if individual.pos.distance_to(leader.pos) <= individual.perception:
+                                    tax=energy_to_receive/2
+
+                                    leader.energy+=tax
+                                    energy_to_receive-=tax
+
+                                    print(f" IMPOSTO o verdinho beta pagou {tax} pro verdao alfa!")
+
+                                    break
+
                 if individual.carnivore:
                     individual.energy+=energy_to_receive/4
                 else: 
                     individual.energy+=energy_to_receive
-                if individual.most_significant_gene==3:
+
+                if "Socialism" in individual.skills:
                     for friend in individuals:
                         if friend!=individual and friend.most_significant_gene==3:
                             if individual.pos.distance_to(friend.pos)<=individual.perception:
                                 friend.energy+=(energy_to_receive)/2
+
+                elif individual.most_significant_gene==3:
+                    for friend in individuals:
+                        if friend!=individual and friend.most_significant_gene==3:
+                            if individual.pos.distance_to(friend.pos)<=individual.perception:
+
+                                friend.energy+=(energy_to_receive)/4
 
                 fruits.remove(fruit)
 

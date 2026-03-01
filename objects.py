@@ -1,11 +1,12 @@
 import math
 import pygame
+import random
 
 class Individual:
     def __init__(self, p, e, v, s, a, x, y, screen):
         self.perception=p*50
         self.energy=e*50
-        self.velocity=0.5+v/5
+        self.velocity=0.5+v/2 #MUDAR PRA 5 DEPOIS
         self.sociability=s
         self.angriness=a
         self.initial_energy = self.energy
@@ -28,6 +29,9 @@ class Individual:
 
         self.ready_to_reproduce=False
         self.mate_target=None
+
+        self.skills=[]
+        self.check_evolution()
 
         if(self.most_significant_gene==4):
             self.carnivore=True
@@ -55,6 +59,25 @@ class Individual:
         elif self.most_significant_gene==0:
             self.color='blue'
 
+    
+    def check_evolution(self):
+        if self.genes[2]>=7:
+            branch=random.choice(["Sprint", "Endurance"])
+            self.skills.append(branch)
+
+        if self.genes[3]>=7:
+            branch=random.choice(["Leadership", "Socialism"])
+            self.skills.append(branch)
+
+        if self.genes[4]>=7:
+            branch=random.choice(["Killer", "Energy_Steal"])
+            self.skills.append(branch)
+
+            if "Killer" in self.skills:
+                self.damage=self.damage*2
+                self.velocity=self.velocity+0.5
+        
+
     #Desenhar individuo
     def draw_Individual(self):
         #pygame.draw.circle(self.screen, self.color, self.pos, self.size)
@@ -62,6 +85,20 @@ class Individual:
 
         #if self.ready_to_reproduce:
             #pygame.draw.circle(self.screen, (255, 105, 180), self.pos, self.perception, 1)
+        if "Leadership" in self.skills:
+            pygame.draw.rect(self.screen, (255, 215, 0), (self.pos.x - 2, self.pos.y - 2, self.size + 4, self.size + 4), 2)
+
+        elif "Socialism" in self.skills:
+            pygame.draw.rect(self.screen, (0, 255, 255), (self.pos.x - 2, self.pos.y - 2, self.size + 4, self.size + 4), 2)
+
+        if "Killer" in self.skills:
+            pygame.draw.rect(self.screen, (255, 255, 255), (self.pos.x - 2, self.pos.y - 2, self.size + 4, self.size + 4), 2)
+
+        if "Energy_Steal" in self.skills:
+            pygame.draw.rect(self.screen, (148, 0, 211), (self.pos.x - 2, self.pos.y - 2, self.size + 4, self.size + 4), 2)
+
+        
+
 
 
 
