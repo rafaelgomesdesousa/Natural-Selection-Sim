@@ -24,6 +24,7 @@ eva=Individual(1,1,4,5,2, width/2+10, heigth/2+10, screen)
 
 individuals=[]
 fruits=[]
+shields=[]
 
 time_between_fruits=1000
 last_spawn_fruit=pygame.time.get_ticks()
@@ -32,10 +33,10 @@ last_spawn_fruit=pygame.time.get_ticks()
 spawn_Fruits(1000,fruits, width, heigth, screen)
 #spawn_Individuals(50, individuals, width, heigth, screen)
 
-spawn_specific_individuals(20, individuals, width, heigth, 1, 1, screen)     #ENERGY
-spawn_specific_individuals(20, individuals, width, heigth, 2, 2, screen)     #VELOCITY
-spawn_specific_individuals(20, individuals, width, heigth, 3, 3, screen)     #SOCIABILITY
-spawn_specific_individuals(20, individuals, width, heigth, 4, 4, screen)     #ANGRINESS
+spawn_specific_individuals(25, individuals, width, heigth, 1, 1, screen)     #ENERGY
+#spawn_specific_individuals(20, individuals, width, heigth, 2, 2, screen)     #VELOCITY
+#spawn_specific_individuals(25, individuals, width, heigth, 3, 3, screen)     #SOCIABILITY
+#spawn_specific_individuals(10, individuals, width, heigth, 4, 4, screen)     #ANGRINESS
  
 
 fonte = pygame.font.SysFont('Arial', 30)
@@ -65,7 +66,7 @@ while running:
 
     current_time=pygame.time.get_ticks()
     if current_time-last_spawn_fruit>time_between_fruits:
-        spawn_Fruits(30, fruits, width, heigth, screen) #MUDAR PRA 30 FRUTAS POR SEGUNDO DEPOIS
+        spawn_Fruits(10, fruits, width, heigth, screen) #MUDAR PRA 30 FRUTAS POR SEGUNDO DEPOIS
         #spawn_specific_individuals(10, individuals, width, heigth, 2, 1, screen)   DESCOMENTAR PRA VER OS UPGRADES DOS CARNIVOROS
         #for individual in individuals:
             #print(individual.energy)
@@ -109,6 +110,16 @@ while running:
                 new_born.append(child)
 
     individuals.extend(new_born)
+
+    for individual in individuals:
+        if "Shield" in individual.skills:
+            shields.append(individual)
+
+    for shield in shields:
+        for individual in individuals:
+            if individual.carnivore:
+                if checking_Collision(shield, individual):
+                    individual.energy-=10
 
     for fruit in fruits:
         fruit.draw_Fruit()

@@ -32,6 +32,7 @@ class Individual:
 
         self.skills=[]
         self.check_evolution()
+        self.shield_angle=0
 
         if(self.most_significant_gene==4):
             self.carnivore=True
@@ -76,6 +77,22 @@ class Individual:
             if "Killer" in self.skills:
                 self.damage=self.damage*2
                 self.velocity=self.velocity+0.5
+
+        if self.genes[1]>=7:
+            branch=random.choice(["Shield", "Resistance"])
+            self.skills.append(branch)
+
+    def yellow_shield(self):
+        if self.most_significant_gene==1:
+            
+            self.shield_angle+=0.05
+
+            shield_x_pos=self.pos.x+20*(math.cos(self.shield_angle*2))
+            shield_y_pos=self.pos.y+20*(math.sin(self.shield_angle*2))
+
+            shield=Shield(shield_x_pos, shield_y_pos, self.screen)
+            shield.draw_shield()
+
         
 
     #Desenhar individuo
@@ -91,16 +108,19 @@ class Individual:
         elif "Socialism" in self.skills:
             pygame.draw.rect(self.screen, (0, 255, 255), (self.pos.x - 2, self.pos.y - 2, self.size + 4, self.size + 4), 2)
 
-        if "Killer" in self.skills:
+        elif "Killer" in self.skills:
             pygame.draw.rect(self.screen, (255, 255, 255), (self.pos.x - 2, self.pos.y - 2, self.size + 4, self.size + 4), 2)
 
-        if "Energy_Steal" in self.skills:
+        elif "Energy_Steal" in self.skills:
             pygame.draw.rect(self.screen, (148, 0, 211), (self.pos.x - 2, self.pos.y - 2, self.size + 4, self.size + 4), 2)
 
+        elif "Shield" in self.skills:
+            self.yellow_shield()
         
+        elif "Resistance" in self.skills:
+            self.energy_waist=0
 
-
-
+    
 
 class Fruits:
     def __init__(self, protein, x, y, screen):
@@ -114,4 +134,13 @@ class Fruits:
 
     def draw_Fruit(self):
         pygame.draw.circle(self.screen, self.color, self.pos, self.size)
+
+
+class Shield:
+    def __init__(self, x, y, screen):
+        self.pos=pygame.math.Vector2(x,y)
+        self.screen=screen
+
+    def draw_shield(self):
+        pygame.draw.circle(self.screen, 'yellow', self.pos, 2)
 
