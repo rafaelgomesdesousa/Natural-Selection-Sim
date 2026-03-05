@@ -3,6 +3,7 @@ import sys
 from objects import *
 from functions import *
 import random
+from simulation import *
 
 pygame.init()
 
@@ -10,7 +11,22 @@ width=1200
 heigth=800
 screen=pygame.display.set_mode((1200,800))
 pygame.display.set_caption("Natural Selection")
-clock=pygame.time.Clock()
+
+while True:
+
+    choice=display_initial_screen(screen, width, heigth)
+
+    if choice=="create":
+        play_simulation(screen, width, heigth, mode="create")
+
+    elif choice=="predefined":
+        play_simulation(screen,width, heigth, mode="predefined")
+
+    elif choice=="statistics":
+        print("Still working")
+
+
+""" clock=pygame.time.Clock()
 running=True
 
 #Criando Grid
@@ -30,7 +46,7 @@ time_between_fruits=1000
 last_spawn_fruit=pygame.time.get_ticks()
 
 
-spawn_Fruits(1000,fruits, width, heigth, screen)
+spawn_Fruits(2000,fruits, width, heigth, screen)
 #spawn_Individuals(50, individuals, width, heigth, screen)
 
 spawn_specific_individuals(25, individuals, width, heigth, 1, 1, screen)     #ENERGY
@@ -43,14 +59,9 @@ fonte = pygame.font.SysFont('Arial', 30)
 
 mortos=0
 qtd_individuos_inicial=len(individuals)
+ """
 
-perceptors=[]
-energized=[]
-velociters=[]
-socialists=[]
-ragers=[]
-
-while running:
+""" while running:
     qtd_individuos=len(individuals)
     mortos=str(qtd_individuos_inicial-qtd_individuos)
 
@@ -119,7 +130,7 @@ while running:
         for individual in individuals:
             if individual.carnivore:
                 if checking_Collision(shield, individual):
-                    individual.energy-=10
+                    individual.energy-=0.1
 
     for fruit in fruits:
         fruit.draw_Fruit()
@@ -171,6 +182,6 @@ while running:
     screen.blit(deaths_text,(100, 100))
 
     clock.tick(60)
-    pygame.display.flip()
+    pygame.display.flip() """
 pygame.quit()
 sys.exit()

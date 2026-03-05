@@ -46,7 +46,7 @@ class Individual:
             self.energy_waist=0.01
 
         if self.most_significant_gene==2:
-            self.energy_waist=0.5
+            self.energy_waist=0.1
 
         #Setting Color
         if self.most_significant_gene==4:

@@ -2,6 +2,7 @@ import pygame
 import math
 from objects import *
 import random
+import sys
 
 
 # Desenhar Grid
@@ -294,3 +295,61 @@ def find_group(individual, individuals):
             direction = direction.normalize()
 
             individual.pos += direction * (individual.velocity * 0.8)
+
+
+def display_initial_screen(screen, width, height):
+
+    black=(0,0,0)
+    white=(255,255,255)
+    green=(50,200,50)
+    gray=(150,150,150)
+
+    font_title = pygame.font.SysFont("arial", 60, bold=True)
+    font_options = pygame.font.SysFont("arial", 40)
+
+    text_title=font_title.render("Natural Selection", True, (255,255,255))
+    rect_title = text_title.get_rect(center=(width // 2, height // 4))
+
+    text_create=font_options.render("1. Create", True, gray)
+    rect_create=text_create.get_rect(center=(width // 2, height // 2))
+
+    text_predef=font_options.render("2. Predefined", True, gray)
+    rect_predef=text_predef.get_rect(center=(width // 2, height // 2 + 80))
+
+    text_estatistics=font_options.render("3. Estatistics", True, gray)
+    rect_estatistics = text_estatistics.get_rect(center=(width // 2, height // 2 + 160))
+
+    while True:
+        mouse_pos=pygame.mouse.get_pos()
+
+        for event in pygame.event.get():
+            if event.type==pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            if event.type==pygame.MOUSEBUTTONDOWN and event.button==1:
+                if rect_create.collidepoint(mouse_pos):
+                    return "create"
+                elif rect_predef.collidepoint(mouse_pos):
+                    return "predefined"
+                elif rect_estatistics.collidepoint(mouse_pos):
+                    return "estatistics"
+                
+        
+        color_create=green if rect_create.collidepoint(mouse_pos) else gray
+        text_create=font_options.render("1. Create", True, color_create)
+
+        color_predef=green if rect_predef.collidepoint(mouse_pos) else gray
+        text_predef=font_options.render("2. Predefined", True, color_predef)
+
+        color_estatistics=green if rect_estatistics.collidepoint(mouse_pos) else gray
+        text_estatistics=font_options.render("3. Estatistics", True, color_estatistics)
+
+        screen.fill(black)
+        screen.blit(text_title, rect_title)
+
+        screen.blit(text_create, rect_create)
+        screen.blit(text_predef, rect_predef)
+        screen.blit(text_estatistics, rect_estatistics)
+
+        pygame.display.flip()
