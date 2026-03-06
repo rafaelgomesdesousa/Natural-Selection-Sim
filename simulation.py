@@ -1,6 +1,7 @@
 import pygame
 from objects import *
 from functions import *
+from database import *
 
 
 def play_simulation(screen, width, heigth, mode):
@@ -24,18 +25,44 @@ def play_simulation(screen, width, heigth, mode):
 #Spawna Frutas iniciais
     spawn_Fruits(2000,fruits, width, heigth, screen)
 
+#Iniciando coisas pro banco de dados
+
+    species_peak = {0:0, 1:0, 2:0, 3:0, 4:0}
+    maximum_generation = {0:1, 1:1, 2:1, 3:1, 4:1}
+    
+    initial_population = {0:0, 1:0, 2:0, 3:0, 4:0}
+    final_population = {0:0, 1:0, 2:0, 3:0, 4:0}
+    alive_individuals_now = {0:0, 1:0, 2:0, 3:0, 4:0}
+
+    initial_perceptors=25
+    initial_energizeds=25
+    initial_velociters=20
+    initial_socialists=25
+    initial_ragers=10
+
+    total_seconds=0
+
+    total_born=0
+    total_deaths=0
+
 #Spawna Individuos Iniciais
 
     if mode=="predefined":
-        spawn_specific_individuals(25, individuals, width, heigth, 1, 1, screen)     #ENERGY
-        spawn_specific_individuals(20, individuals, width, heigth, 2, 2, screen)     #VELOCITY
-        spawn_specific_individuals(25, individuals, width, heigth, 3, 3, screen)     #SOCIABILITY
-        spawn_specific_individuals(10, individuals, width, heigth, 4, 4, screen)     #ANGRINESS
+        spawn_specific_individuals(initial_perceptors, individuals, width, heigth, 1, 1, screen)     #PERCEPTION
+        spawn_specific_individuals(initial_energizeds, individuals, width, heigth, 1, 1, screen)     #ENERGY
+        spawn_specific_individuals(initial_velociters, individuals, width, heigth, 2, 2, screen)     #VELOCITY
+        spawn_specific_individuals(initial_socialists, individuals, width, heigth, 3, 3, screen)     #SOCIABILITY
+        spawn_specific_individuals(initial_ragers, individuals, width, heigth, 4, 4, screen)     #ANGRINESS
 
     elif mode=="create":    
         pass
 
     type_selected=1
+
+    for individual in individuals:
+        gene = individual.most_significant_gene
+        if gene in initial_population:
+            initial_population[gene] += 1
 
     while running:
 
@@ -48,6 +75,30 @@ def play_simulation(screen, width, heigth, mode):
             
             if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
+
+                        simulation_id=save_simulation_log(mode, total_seconds, total_born, total_deaths)
+
+                        final_population = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0}
+                        for individual in individuals:
+                            gene = individual.most_significant_gene
+                            if gene in final_population:
+                                final_population[gene] += 1
+
+                        data_to_insert=[]
+
+                        for gene in range(5):
+                            line=(
+                                simulation_id,
+                                gene,
+                                initial_population[gene],
+                                final_population[gene],
+                                species_peak[gene],
+                                maximum_generation[gene]
+                            )
+                            data_to_insert.append(line)
+
+                        save_species_performance(data_to_insert)
+
                         running = False
 
                     if event.key==pygame.K_1:
@@ -91,9 +142,21 @@ def play_simulation(screen, width, heigth, mode):
 
 #Funcao pra spawnar n frutas por segundo
         current_time=pygame.time.get_ticks()
+    #Tudo que estiver dentro desse if sera executado a cada 1 segundo
         if current_time-last_spawn_fruit>time_between_fruits:
             spawn_Fruits(25, fruits, width, heigth, screen) #MUDAR PRA 30 FRUTAS POR SEGUNDO DEPOIS
             #spawn_specific_individuals(10, individuals, width, heigth, 2, 1, screen)   DESCOMENTAR PRA VER OS UPGRADES DOS CARNIVOROS
+            total_seconds+=1
+            alive_individuals_now={0: 0, 1: 0, 2: 0, 3: 0, 4: 0}
+
+            for individual in individuals:
+                gene=individual.most_significant_gene
+                if gene in alive_individuals_now:
+                    alive_individuals_now[gene]+=1
+
+            for gene in species_peak:
+                if alive_individuals_now[gene]>species_peak[gene]:
+                    species_peak[gene]=alive_individuals_now[gene]
             
             last_spawn_fruit=current_time
 
@@ -122,7 +185,6 @@ def play_simulation(screen, width, heigth, mode):
                     new_genes = mix_genes(individual, individual.mate_target)
                     individual.ready_to_reproduce=False
                     individual.mate_target.ready_to_reproduce=False
-                    individual.mate_target=None
 
                     child=Individual(new_genes[0],
                                     new_genes[1],
@@ -133,7 +195,16 @@ def play_simulation(screen, width, heigth, mode):
                                     individual.pos.y,
                                     individual.screen)
                     
+                    total_born+=1
+                    child.generation=max(individual.generation, individual.mate_target.generation)+1
+                    individual.mate_target=None
+                    
                     new_born.append(child)
+
+                    gene_child=child.most_significant_gene
+                    if child.generation>maximum_generation[gene_child]:
+                        maximum_generation[gene_child]=child.generation
+
 
         individuals.extend(new_born)
 
@@ -198,7 +269,8 @@ def play_simulation(screen, width, heigth, mode):
 
                     fruits.remove(fruit)
             attack(individual, individuals)
-        checking_Death(individuals)
+        deaths_now=checking_Death(individuals)
+        total_deaths+=deaths_now
         
         clock.tick(60)
         pygame.display.flip()

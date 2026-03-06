@@ -29,6 +29,7 @@ class Individual:
 
         self.ready_to_reproduce=False
         self.mate_target=None
+        self.generation=1
 
         self.skills=[]
         self.check_evolution()

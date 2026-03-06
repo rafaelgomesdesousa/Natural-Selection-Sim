@@ -199,9 +199,13 @@ def checking_Collision(obj_1,obj_2):
 
 
 def checking_Death(list_individuals):
+    deaths_in_frame=0
     for individual in list_individuals[:]:
         if individual.energy<=0:
             list_individuals.remove(individual)
+            deaths_in_frame+=1
+            
+    return deaths_in_frame
 
 
 def attack(individual, list_individuals):
